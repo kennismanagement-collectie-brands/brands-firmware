@@ -5,7 +5,12 @@ ___
 
 # Table of Content
 ##  1.) Code Conventions
+### 1.1) Naming
+### 1.2) Layout
+
 ##  2.) Repository Management
+### 2.1) Committing Work
+### 2.2) GitFlow
 
 ___
 
