@@ -4,7 +4,8 @@
 ___
 
 # Table of Content
-
+## * 1.) Code Conventions
+## * 2.) Repository Management
 
 ___
 
@@ -152,29 +153,18 @@ ___
 # 2.) Repository Management
 ## 2.1) Committing work
 ### Commit Conventions
-
+For [commit conventions][1], please refer to the following [link][1].
 ### Pull requests
+Each merge should be performed via a pull-request. Forcing the branch to be checked by another project member, thus ensuring quality and set requirements are met.
 
 ### Merge requests
+Merging is only allowed via a pull request!
 
 ## 2.2)GitFlow
-### Branches
-#### Master
-##### Description
-##### Priviliges
-
-#### Dev
-##### Description
-##### Priviliges
-
-#### Release
-##### Description
-##### Priviliges
-
-#### Feature
-##### Description
-##### Priviliges
-___
+For each repository the [GitFlow][2] should be applied.
 
 
-# 3.) Testing Regulations
+
+
+[1]: https://chris.beams.io/posts/git-commit/
+[2]: https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
