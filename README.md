@@ -4,8 +4,8 @@
 ___
 
 # Table of Content
-## * 1.) Code Conventions
-## * 2.) Repository Management
+##  1.) Code Conventions
+##  2.) Repository Management
 
 ___
 
