@@ -2,8 +2,12 @@
 #define MQTTCONRTOLLER_H
 
 // *** Forward Declarations ***********************
+class WiFiClientSecure;
 class PubSubClient;
 class RelayController;
+
+// *** Dependencies *******************************
+#include <Arduino.h>
 
 
 
@@ -21,7 +25,7 @@ MqttController                                  (int& PCB_ID);
 //          PUBLIC METHODS
 //* ***********************************************
 void callback                                   (char* topic, 
-                                                 char* payload, 
+                                                 byte* payload, 
                                                  unsigned int length);
 
 private:
@@ -31,6 +35,8 @@ private:
 bool connect                                    ();
 bool publish                                    (const char* topic, 
                                                  const char* payload);
+// Getter
+WiFiClientSecure& getClient()                   { return *m_client; }
 
 
 //* ***********************************************
@@ -39,6 +45,7 @@ bool publish                                    (const char* topic,
 // Connection variables
 const char*                             m_NET_SSID;
 const char*                             m_NET_PASS;
+const char*                             m_NET_ROOT_CA;
 const char*                             m_MQTT_SERVER;
 const char*                             m_MQTT_USER;
 const char*                             m_MQTT_PASS;
@@ -48,6 +55,7 @@ int&                                    m_PCB_ID;
 
 
 // Objects
+WiFiClientSecure*                       m_client;
 PubSubClient*                           m_mqtt;
 RelayController*                        m_relayCtrl;
 

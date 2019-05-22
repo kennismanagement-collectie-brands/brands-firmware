@@ -4,6 +4,9 @@
 // *** Forward Declarations ***********************
 class MqttController;
 
+// *** Definitions ********************************
+const int BAUD_RATE = 9600;
+
 
 
 class Core {
