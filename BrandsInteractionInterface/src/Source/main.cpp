@@ -11,7 +11,8 @@
 Core core;
 
 void setup() {
-  // put your setup code here, to run once:
+  Serial.begin(BAUD_RATE);      // Re-Enable Serial for global scope usage
+  Serial.println("Executing setup...");
 }
 
 void loop() {
@@ -26,7 +27,13 @@ Core::Core () :
 m_PCB_ID(nullptr),
 m_mqtt(nullptr)
 {
-  /* Not implemented */
+  Serial.begin(BAUD_RATE);      // Initialize Serial for constructor scope time
+  Serial.println("Initialized Serial monitor!");
+
+  // TODO: Initialization logic goes here!
+
+  Serial.flush();               // Make sure the Serial buffer is empty before closing
+  Serial.end();                 // Clear Serial for constructor scope
 }
 
 Core::~Core() { /* Not implemented */ }
