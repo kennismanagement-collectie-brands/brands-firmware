@@ -12,8 +12,6 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-
-
 //* ***********************************************
 //          CONSTRUCTOR & DESTRUCTOR
 //* ***********************************************
@@ -23,10 +21,10 @@ m_client(new WiFiClientSecure()),
 m_mqtt(nullptr),
 m_relayCtrl(nullptr)
 {
-    m_mqtt      = new PubSubClient(getClient()); 
+    m_mqtt = new PubSubClient(getClient()); 
 
     // Configure secure client
-    m_client->setCACert(m_NET_ROOT_CA);
+    // m_client->setCACert(m_NET_ROOT_CA);
     m_mqtt->setCallback([this] (char* topic, byte* payload, unsigned int length) { this->callback(topic, payload, length); });
 
     this->connect();
@@ -68,6 +66,25 @@ bool MqttController::connect ()
     Serial.println("Connected");
 
     // Connect with MQTT if connected to WiFi
+    //WiFiClientSecure espClient;
+    //PubSubClient client(espClient);
+    m_mqtt->setServer(m_MQTT_SERVER, m_MQTT_PORT);
+    Serial.println("Connecting to MQTT..");
+    while(!m_mqtt->connected())
+    {
+        if(m_mqtt->connect("espClient"))
+        {
+            Serial.println("Connected to MQTT!");
+            return true;
+        }else{
+            Serial.print("failed, rc=");
+            Serial.print(m_mqtt->state());
+            Serial.println(" try again in 5 seconds");
+            // Wait 5 seconds before retrying
+            delay(5000);
+        }
+    }
+
     return false;
 }
 

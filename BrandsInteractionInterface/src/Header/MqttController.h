@@ -46,7 +46,8 @@ WiFiClientSecure& getClient()                   { return *m_client; }
 const char*                             m_NET_SSID = "SSID";
 const char*                             m_NET_PASS = "PASSWORD";
 const char*                             m_NET_ROOT_CA;
-const char*                             m_MQTT_SERVER;
+const char*                             m_MQTT_SERVER = "test.mosquitto.org";
+const int                               m_MQTT_PORT = 8883;
 const char*                             m_MQTT_USER;
 const char*                             m_MQTT_PASS;
 
