@@ -17,18 +17,20 @@
 //* ***********************************************
 //          CONSTRUCTOR & DESTRUCTOR
 //* ***********************************************
-MqttController::MqttController (int& PCB_ID) :
+MqttController::MqttController (int PCB_ID) :
 m_PCB_ID(PCB_ID),
 m_client(new WiFiClientSecure()),
 m_mqtt(nullptr),
 m_relayCtrl(nullptr)
 {
+    Serial.println("Im here");
     m_mqtt      = new PubSubClient(getClient()); 
 
     // Configure secure client
     m_client->setCACert(m_NET_ROOT_CA);
     m_mqtt->setCallback([this] (char* topic, byte* payload, unsigned int length) { this->callback(topic, payload, length); });
 
+    this->connect();
 }
 MqttController::~MqttController () { /* No implementation */ }
 
@@ -58,8 +60,16 @@ void MqttController::callback (char* topic, byte* payload, unsigned int length)
 bool MqttController::connect ()
 {
     // Connect with WiFi
+    Serial.println("WE SHALL NOW CONNECT!");
+    WiFi.begin("SSID", "PASSWORD");
+    while(WiFi.status() != WL_CONNECTED)
+    {
+        delay(1000);
+        Serial.println("Connecting to WiFi..");
+    }
+    Serial.println("Connected");
 
-    // Connect with MQTT if not connected
+    // Connect with MQTT if connected to WiFi
     return false;
 }
 

@@ -5,7 +5,7 @@
 class MqttController;
 
 // *** Definitions ********************************
-const int BAUD_RATE = 9600;
+const int BAUD_RATE = 115200;
 
 
 
@@ -30,7 +30,7 @@ private:
 //* ***********************************************
 //          PRIVATE ATTRIBUTES
 //* ***********************************************
-int*                                            m_PCB_ID;
+int                                             m_PCB_ID;
 MqttController*                                 m_mqtt;
 
 

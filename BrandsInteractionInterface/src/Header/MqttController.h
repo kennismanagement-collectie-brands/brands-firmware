@@ -17,7 +17,7 @@ public:
 //* ***********************************************
 //          CONSTRUCTOR & DESTRUCTOR
 //* ***********************************************
-MqttController                                  (int& PCB_ID);
+MqttController                                  (int PCB_ID);
 ~MqttController                                 ();
 
 
@@ -51,7 +51,7 @@ const char*                             m_MQTT_USER;
 const char*                             m_MQTT_PASS;
 
 // Print identifier
-int&                                    m_PCB_ID;
+int                                     m_PCB_ID;
 
 
 // Objects

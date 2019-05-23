@@ -8,11 +8,14 @@
 // *** Dependencies  ******************************
 #include "Header/MqttController.h"
 
-Core core;
+Core* core; 
 
 void setup() {
   Serial.begin(BAUD_RATE);      // Re-Enable Serial for global scope usage
   Serial.println("Executing setup...");
+
+  delay(100);                   // Give it some breathing room
+  core = new Core();
 }
 
 void loop() {
@@ -23,17 +26,13 @@ void loop() {
 //* ***********************************************
 //          CONSTRUCTOR & DESTRUCTOR
 //* ***********************************************
-Core::Core () :
-m_PCB_ID(nullptr),
-m_mqtt(nullptr)
+Core::Core ()
 {
-  Serial.begin(BAUD_RATE);      // Initialize Serial for constructor scope time
   Serial.println("Initialized Serial monitor!");
+  m_PCB_ID = 0;
+  m_mqtt = new MqttController(m_PCB_ID);
 
   // TODO: Initialization logic goes here!
-
-  Serial.flush();               // Make sure the Serial buffer is empty before closing
-  Serial.end();                 // Clear Serial for constructor scope
 }
 
 Core::~Core() { /* Not implemented */ }
