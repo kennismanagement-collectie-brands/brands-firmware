@@ -7,6 +7,7 @@
 // ========================================================================
 // *** Dependencies  ******************************
 #include "Header/MqttController.h"
+#include "Header/DipswitchReader.h"
 
 Core core;
 
@@ -23,10 +24,11 @@ void loop() {
 //          CONSTRUCTOR & DESTRUCTOR
 //* ***********************************************
 Core::Core () :
-m_PCB_ID(nullptr),
+m_PCB_ID(DipswitchReader::fetchPCBID()),
 m_mqtt(nullptr)
 {
   /* Not implemented */
+
 }
 
 Core::~Core() { /* Not implemented */ }

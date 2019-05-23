@@ -19,12 +19,5 @@ private:
 DipswitchReader                                 ();
 ~DipswitchReader                                ();
 
-
-//* ***********************************************
-//          PRIVATE ATTRIBUTES
-//* ***********************************************
-int m_relays[4];
-
-
 };
 #endif
