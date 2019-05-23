@@ -23,7 +23,6 @@ m_client(new WiFiClientSecure()),
 m_mqtt(nullptr),
 m_relayCtrl(nullptr)
 {
-    Serial.println("Im here");
     m_mqtt      = new PubSubClient(getClient()); 
 
     // Configure secure client
@@ -60,8 +59,7 @@ void MqttController::callback (char* topic, byte* payload, unsigned int length)
 bool MqttController::connect ()
 {
     // Connect with WiFi
-    Serial.println("WE SHALL NOW CONNECT!");
-    WiFi.begin("SSID", "PASSWORD");
+    WiFi.begin(m_NET_SSID, m_NET_PASS);
     while(WiFi.status() != WL_CONNECTED)
     {
         delay(1000);
