@@ -61,8 +61,6 @@ void MqttController::callback (char* topic, byte* payload, unsigned int length)
 //* ***********************************************
 bool MqttController::connect ()
 {
-    // TODO: Implement time-out option.
-    
     // *** WiFi Connecting ************************
     // Check if WiFi connection is available
     if (WiFi.status() != WL_CONNECTED) {
