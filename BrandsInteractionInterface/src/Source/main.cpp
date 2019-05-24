@@ -7,6 +7,7 @@
 // ========================================================================
 // *** Dependencies  ******************************
 #include "Header/MqttController.h"
+#include "Header/DipswitchReader.h"
 
 Core* core; 
 
@@ -26,10 +27,10 @@ void loop() {
 //* ***********************************************
 //          CONSTRUCTOR & DESTRUCTOR
 //* ***********************************************
-Core::Core ()
+Core::Core () :
+m_PCB_ID(DipswitchReader::fetchPCBID())
 {
   Serial.println("Initialized Serial monitor!");
-  m_PCB_ID = 0;
   m_mqtt = new MqttController(m_PCB_ID);
 
   // TODO: Initialization logic goes here!
