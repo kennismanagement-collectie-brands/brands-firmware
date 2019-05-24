@@ -19,7 +19,7 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  core->loop();
 }
 
 
@@ -48,5 +48,11 @@ void Core::setup ()
 
 void Core::loop ()
 {
-  /* Not implemented */
+  m_currentMillis = millis();
+  if(m_currentMillis - m_startMillis >= m_delay)
+  {
+    m_mqtt->loop();
+    Serial.println("Core Looped");
+    m_startMillis = m_currentMillis;
+  }
 }

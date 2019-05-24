@@ -27,6 +27,8 @@ MqttController                                  (int PCB_ID);
 void callback                                   (char* topic, 
                                                  byte* payload, 
                                                  unsigned int length);
+void loop                                       ();
+
 
 private:
 //* ***********************************************
@@ -35,6 +37,7 @@ private:
 bool connect                                    ();
 bool publish                                    (const char* topic, 
                                                  const char* payload);
+                                                 
 // Getter
 WiFiClient& getClient()                         { return *m_client; }
 
@@ -47,7 +50,7 @@ const char*                             m_NET_SSID      = "SSID";
 const char*                             m_NET_PASS      = "PASSWORD";
 const char*                             m_NET_ROOT_CA;
 const char*                             m_MQTT_SERVER   = "test.mosquitto.org";
-const int                               m_MQTT_PORT     = 8883;
+const int                               m_MQTT_PORT     = 1883;
 const char*                             m_MQTT_USER;
 const char*                             m_MQTT_PASS;
 

@@ -25,12 +25,17 @@ m_relayCtrl(nullptr)
 
     // Configure secure client
     // m_client->setCACert(m_NET_ROOT_CA);
+    m_mqtt->setServer(m_MQTT_SERVER, m_MQTT_PORT);
     m_mqtt->setCallback([this] (char* topic, byte* payload, unsigned int length) { this->callback(topic, payload, length); });
 
     this->connect();
 }
 MqttController::~MqttController () { /* No implementation */ }
 
+void MqttController::loop()
+{
+    this->connect();
+}
 
 
 //* ***********************************************
@@ -77,13 +82,13 @@ bool MqttController::connect ()
     // *** MQTT Connecting ************************
     // Check if connection is available
     if (m_mqtt->connected())                        {  return true; }
-    m_mqtt->setServer(m_MQTT_SERVER, m_MQTT_PORT);
     Serial.println("Attempting MQTT connection...");
     while(!m_mqtt->connected())
     {
         // TODO: Implement PCB_ID here.
-        if (m_mqtt->connect("espClient")) {
+        if (m_mqtt->connect("collectieBrandsMuseum")) {
             Serial.println("Connected MQTT");
+            m_mqtt->subscribe("somerandomtopictosubscribe");
             return true;
         } else {
             Serial.print("failed, rc=" + (String)m_mqtt->state() + " try again in 5 seconds");
