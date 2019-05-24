@@ -18,10 +18,11 @@
 MqttController::MqttController (int PCB_ID) :
 m_PCB_ID(PCB_ID),
 m_client(new WiFiClient()),
-m_mqtt(nullptr),
-m_relayCtrl(nullptr)
+m_mqtt(nullptr)
+//m_relayCtrl(nullptr)
 {
     m_mqtt = new PubSubClient(getClient()); 
+    m_relayCtrl = new RelayController();
 
     // Configure secure client
     // m_client->setCACert(m_NET_ROOT_CA);
