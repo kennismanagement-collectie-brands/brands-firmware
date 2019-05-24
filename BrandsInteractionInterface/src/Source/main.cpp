@@ -53,7 +53,7 @@ void Core::loop ()
   if(m_currentMillis - m_startMillis >= m_delay)
   {
     m_mqtt->loop();
-    Serial.printf("Core Looped in %dms\n", millis() - m_currentMillis);
+    Serial.printf("Core Looped in %lums\n", millis() - m_currentMillis);
     m_startMillis = m_currentMillis;
   }
 }
