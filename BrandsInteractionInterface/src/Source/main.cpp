@@ -9,14 +9,18 @@
 #include "Header/MqttController.h"
 #include "Header/DipswitchReader.h"
 
-Core core;
+Core* core; 
 
 void setup() {
-  // put your setup code here, to run once:
+  Serial.begin(BAUD_RATE);      // Re-Enable Serial for global scope usage
+  Serial.println("Executing setup...");
+
+  delay(100);                   // Give it some breathing room
+  core = new Core();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  core->loop();
 }
 
 
@@ -24,11 +28,12 @@ void loop() {
 //          CONSTRUCTOR & DESTRUCTOR
 //* ***********************************************
 Core::Core () :
-m_PCB_ID(DipswitchReader::fetchPCBID()),
-m_mqtt(nullptr)
+m_PCB_ID(DipswitchReader::fetchPCBID())
 {
-  /* Not implemented */
+  Serial.println("Initialized Serial monitor!");
+  m_mqtt = new MqttController(m_PCB_ID);
 
+  // TODO: Initialization logic goes here!
 }
 
 Core::~Core() { /* Not implemented */ }
@@ -44,5 +49,11 @@ void Core::setup ()
 
 void Core::loop ()
 {
-  /* Not implemented */
+  m_currentMillis = millis();
+  if(m_currentMillis - m_startMillis >= m_delay)
+  {
+    m_mqtt->loop();
+    Serial.printf("Core Looped in %dms\n", millis() - m_currentMillis);
+    m_startMillis = m_currentMillis;
+  }
 }
