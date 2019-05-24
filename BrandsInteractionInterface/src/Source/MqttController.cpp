@@ -7,9 +7,9 @@
 // *** Dependencies  ******************************
 #include "Header/RelayController.h"
 
-// External library for MQTT 
-#include <WiFiClientSecure.h>
+// External library for MQTT
 #include <WiFi.h>
+#include <WiFiClient.h>
 #include <PubSubClient.h>
 
 //* ***********************************************
@@ -17,7 +17,7 @@
 //* ***********************************************
 MqttController::MqttController (int PCB_ID) :
 m_PCB_ID(PCB_ID),
-m_client(new WiFiClientSecure()),
+m_client(new WiFiClient()),
 m_mqtt(nullptr),
 m_relayCtrl(nullptr)
 {
@@ -56,30 +56,37 @@ void MqttController::callback (char* topic, byte* payload, unsigned int length)
 //* ***********************************************
 bool MqttController::connect ()
 {
-    // Connect with WiFi
-    WiFi.begin(m_NET_SSID, m_NET_PASS);
-    while(WiFi.status() != WL_CONNECTED)
-    {
-        delay(1000);
-        Serial.println("Connecting to WiFi..");
-    }
-    Serial.println("Connected");
+    // TODO: Implement time-out option.
+    
+    // *** WiFi Connecting ************************
+    // Check if WiFi connection is available
+    if (WiFi.status() != WL_CONNECTED) {
+        Serial.println("Attempting WiFi connection...");
+        WiFi.begin(m_NET_SSID, m_NET_PASS);
 
-    // Connect with MQTT if connected to WiFi
-    //WiFiClientSecure espClient;
-    //PubSubClient client(espClient);
+        // Wait for connection to be established
+        while (WiFi.status() != WL_CONNECTED) {
+            delay(1000);
+            Serial.print(".");
+        }
+
+        Serial.println("\nConnected WiFi\n");
+    }
+
+
+    // *** MQTT Connecting ************************
+    // Check if connection is available
+    if (m_mqtt->connected())                        {  return true; }
     m_mqtt->setServer(m_MQTT_SERVER, m_MQTT_PORT);
-    Serial.println("Connecting to MQTT..");
+    Serial.println("Attempting MQTT connection...");
     while(!m_mqtt->connected())
     {
-        if(m_mqtt->connect("espClient"))
-        {
-            Serial.println("Connected to MQTT!");
+        // TODO: Implement PCB_ID here.
+        if (m_mqtt->connect("espClient")) {
+            Serial.println("Connected MQTT");
             return true;
-        }else{
-            Serial.print("failed, rc=");
-            Serial.print(m_mqtt->state());
-            Serial.println(" try again in 5 seconds");
+        } else {
+            Serial.print("failed, rc=" + (String)m_mqtt->state() + " try again in 5 seconds");
             // Wait 5 seconds before retrying
             delay(5000);
         }
