@@ -35,7 +35,14 @@ MqttController::~MqttController () { /* No implementation */ }
 
 void MqttController::loop()
 {
-    this->connect();
+    m_currentMillis = millis();
+    if(m_currentMillis - m_startMillis >= m_delay)
+    {
+        this->connect();
+        m_startMillis = m_currentMillis;
+    }
+
+    m_mqtt->loop();
 }
 
 

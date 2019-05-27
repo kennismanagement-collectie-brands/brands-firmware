@@ -30,11 +30,6 @@ private:
 //* ***********************************************
 //          PRIVATE ATTRIBUTES
 //* ***********************************************
-// Variables to keep track of elapsed time without blocking the core
-unsigned long                                   m_startMillis = millis();
-unsigned long                                   m_currentMillis;
-const unsigned long                             m_delay = 5000;
-
 int                                             m_PCB_ID;
 MqttController*                                 m_mqtt;
 

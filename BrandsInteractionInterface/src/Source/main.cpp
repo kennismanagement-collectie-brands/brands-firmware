@@ -49,11 +49,5 @@ void Core::setup ()
 
 void Core::loop ()
 {
-  m_currentMillis = millis();
-  if(m_currentMillis - m_startMillis >= m_delay)
-  {
-    m_mqtt->loop();
-    Serial.printf("Core Looped in %lums\n", millis() - m_currentMillis);
-    m_startMillis = m_currentMillis;
-  }
+  m_mqtt->loop();
 }

@@ -49,10 +49,15 @@ WiFiClient& getClient()                         { return *m_client; }
 const char*                             m_NET_SSID      = "SSID";
 const char*                             m_NET_PASS      = "PASSWORD";
 const char*                             m_NET_ROOT_CA;
-const char*                             m_MQTT_SERVER   = "test.mosquitto.org";
+const char*                             m_MQTT_SERVER   = "broker.hivemq.com";
 const int                               m_MQTT_PORT     = 1883;
 const char*                             m_MQTT_USER;
 const char*                             m_MQTT_PASS;
+
+// Variables to keep track of elapsed time without blocking the core
+unsigned long                           m_startMillis = millis();
+unsigned long                           m_currentMillis;
+const unsigned long                     m_delay = 5000;
 
 // Print identifier
 int                                     m_PCB_ID;
