@@ -7,8 +7,6 @@ class MqttController;
 // *** Definitions ********************************
 const int BAUD_RATE = 115200;
 
-
-
 class Core {
 
 public:
@@ -18,13 +16,11 @@ public:
 Core                                            ();
 ~Core                                           ();
 
-
 //* ***********************************************
 //          PUBLIC METHODS
 //* ***********************************************
 void setup                                      ();
 void loop                                       ();
-
 
 private:
 //* ***********************************************
@@ -32,7 +28,6 @@ private:
 //* ***********************************************
 int                                             m_PCB_ID;
 MqttController*                                 m_mqtt;
-
 
 };
 #endif
