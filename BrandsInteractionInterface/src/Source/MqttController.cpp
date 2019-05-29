@@ -57,14 +57,12 @@ void MqttController::loop()
 void MqttController::callback (char* topic, byte* payload, unsigned int length) 
 {
     // Read and parse incoming MQTT messages
-    String formattedPayload;
-    for (int i = 0; i < length; i++) {
-        formattedPayload += (char)payload[i];
-    }
-    String t = topic;
-    Serial.println((char*)"INCOMING\n === TOPIC === \n\t" + t + "\n === PAYLOAD === \n\t" + formattedPayload.c_str());
+    payload[length] = 0;
+    const char* formattedPayload = reinterpret_cast<const char*>(payload);
+    Serial.println((char*)"INCOMING\n === TOPIC === \n\t" + (String)topic + "\n === PAYLOAD === \n\t" + formattedPayload);
 
     // TODO: Implement event handlers.
+
 }
 
 //* ***********************************************
