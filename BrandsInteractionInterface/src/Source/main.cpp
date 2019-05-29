@@ -33,7 +33,7 @@ void loop() {
 //          CONSTRUCTOR & DESTRUCTOR
 //* ***********************************************
 Core::Core () :
-m_PCB_ID(DipswitchReader::fetchPCBID())
+m_PCB_ID("MCB-" + (String)DipswitchReader::fetchPCBID())
 {
   Serial.println("Initialized Serial monitor!");
   m_mqtt = new MqttController(m_PCB_ID);

@@ -13,7 +13,7 @@
 //* ***********************************************
 //          CONSTRUCTOR & DESTRUCTOR
 //* ***********************************************
-MqttController::MqttController (int PCB_ID) :
+MqttController::MqttController (String PCB_ID) :
 m_PCB_ID(PCB_ID),
 m_client(new WiFiClient()),
 m_mqtt(nullptr)
@@ -24,7 +24,7 @@ m_mqtt(nullptr)
     // Configure the MQTT server and set the callback to the "callback" member function of MqttController
     m_mqtt->setServer(m_MQTT_SERVER, m_MQTT_PORT);
     m_mqtt->setCallback([this] (char* topic, byte* payload, unsigned int length) { this->callback(topic, payload, length); });
-
+    Serial.println("PCB IDENTIFIER: " + m_PCB_ID);
     this->connect();
 }
 
@@ -92,7 +92,7 @@ bool MqttController::connect ()
     while(!m_mqtt->connected())
     {
         // TODO: Implement PCB_ID here.
-        if (m_mqtt->connect("collectieBrandsMuseum")) {
+        if (m_mqtt->connect(m_PCB_ID.c_str())) {
             Serial.println("Connected MQTT");
             m_mqtt->subscribe("somerandomtopictosubscribe");
             return true;
