@@ -26,7 +26,7 @@ private:
 //* ***********************************************
 //          PRIVATE ATTRIBUTES
 //* ***********************************************
-int                                             m_PCB_ID;
+String                                          m_PCB_ID;
 MqttController*                                 m_mqtt;
 
 };
