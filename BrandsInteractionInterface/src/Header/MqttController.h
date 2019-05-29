@@ -9,6 +9,14 @@ class RelayController;
 // *** Dependencies *******************************
 #include <Arduino.h>
 
+// *** Command Set Enumeration*********************
+enum CommandSet
+{
+    PROJECT,
+    IDENTIFIER,
+    COMMAND
+};
+
 class MqttController {
 
 public:

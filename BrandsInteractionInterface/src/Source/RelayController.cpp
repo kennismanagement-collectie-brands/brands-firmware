@@ -30,6 +30,6 @@ RelayController::~RelayController () { /* No implementation */ }
 void RelayController::setRelay (int relay, bool state)
 {
     // Prevent retrieving garbage values or causing segmentation faults
-    if(relay >= 4) return;
+    if(relay < 0 || relay >= 4) return;
     digitalWrite(m_relays[relay], state);
 }

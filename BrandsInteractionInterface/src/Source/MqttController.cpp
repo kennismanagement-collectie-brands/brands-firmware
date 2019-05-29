@@ -61,8 +61,26 @@ void MqttController::callback (char* topic, byte* payload, unsigned int length)
     const char* formattedPayload = reinterpret_cast<const char*>(payload);
     Serial.println((char*)"INCOMING\n === TOPIC === \n\t" + (String)topic + "\n === PAYLOAD === \n\t" + formattedPayload);
 
-    // TODO: Implement event handlers.
+    // Split the topic up into different parts to read the command set
+    std::vector<const char*> commands;
+    char* tokens = strtok(topic, "/");
+    while(tokens != NULL)
+    {
+        commands.push_back(tokens);
+        tokens = strtok(NULL, "/");
+    }
 
+    // Compare the command to the available command in the command set
+    if(strcmp(commands[CommandSet::COMMAND], "on") == 0)
+    {
+        m_relayCtrl->setRelay(atoi(formattedPayload), HIGH);
+        Serial.println("Relay would be switched to ON");
+    }
+    else if(strcmp(commands[CommandSet::COMMAND], "off") == 0)
+    {
+        m_relayCtrl->setRelay(atoi(formattedPayload), LOW);
+        Serial.println("Relay would be switched to OFF");
+    }
 }
 
 //* ***********************************************
@@ -92,7 +110,7 @@ bool MqttController::connect ()
         // TODO: Implement PCB_ID here.
         if (m_mqtt->connect("collectieBrandsMuseum")) {
             Serial.println("Connected MQTT");
-            m_mqtt->subscribe("somerandomtopictosubscribe");
+            m_mqtt->subscribe("relaymodule/1101/#");
             return true;
         } else {
             // Wait 5 seconds before retrying
