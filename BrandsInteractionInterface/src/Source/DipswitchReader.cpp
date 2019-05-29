@@ -1,11 +1,11 @@
-#include "../Header/DipswitchReader.h"
-#include <Arduino.h>
 // ========================================================================
 // File:    DipswitchReader.cpp
 // Date:    21-05-2019
 // By:      Mark Meerlo
 // ========================================================================
 
+#include <Arduino.h>
+#include "../Header/DipswitchReader.h"
 
 //* ***********************************************
 //          CONSTRUCTOR & DESTRUCTOR
@@ -13,11 +13,13 @@
 DipswitchReader::DipswitchReader () { /* No implementation */ }
 DipswitchReader::~DipswitchReader () { /* No implementation */ }
 
-
-
 //* ***********************************************
 //          PUBLIC METHODS
 //* ***********************************************
+/*
+ *  Fetches the ID of the PCB using the dipswitches on the printed circuit board.
+ *  A number is generated from the dipswitches using the corresponding binary representations
+ */ 
 int DipswitchReader::fetchPCBID ()
 {
     int m_dipswitches[4]            { 5, 4, 3, 2 };

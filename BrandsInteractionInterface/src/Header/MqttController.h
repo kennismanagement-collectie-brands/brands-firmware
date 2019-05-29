@@ -9,8 +9,6 @@ class RelayController;
 // *** Dependencies *******************************
 #include <Arduino.h>
 
-
-
 class MqttController {
 
 public:
@@ -20,7 +18,6 @@ public:
 MqttController                                  (int PCB_ID);
 ~MqttController                                 ();
 
-
 //* ***********************************************
 //          PUBLIC METHODS
 //* ***********************************************
@@ -29,7 +26,6 @@ void callback                                   (char* topic,
                                                  unsigned int length);
 void loop                                       ();
 
-
 private:
 //* ***********************************************
 //          PRIVATE METHODS
@@ -37,10 +33,7 @@ private:
 bool connect                                    ();
 bool publish                                    (const char* topic, 
                                                  const char* payload);
-                                                 
-// Getter
 WiFiClient& getClient()                         { return *m_client; }
-
 
 //* ***********************************************
 //          PRIVATE ATTRIBUTES
@@ -62,12 +55,10 @@ const unsigned long                     m_delay = 5000;
 // Print identifier
 int                                     m_PCB_ID;
 
-
 // Objects
 WiFiClient*                             m_client;
 PubSubClient*                           m_mqtt;
 RelayController*                        m_relayCtrl;
-
 
 };
 #endif

@@ -1,16 +1,14 @@
-#include "../Header/MqttController.h"
 // ========================================================================
 // File:    MqttController.cpp
 // Date:    21-05-2019
 // By:      Mark Meerlo
 // ========================================================================
-// *** Dependencies  ******************************
-#include "Header/RelayController.h"
 
-// External library for MQTT
+#include <PubSubClient.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
-#include <PubSubClient.h>
+#include "Header/MqttController.h"
+#include "Header/RelayController.h"
 
 //* ***********************************************
 //          CONSTRUCTOR & DESTRUCTOR
@@ -19,20 +17,23 @@ MqttController::MqttController (int PCB_ID) :
 m_PCB_ID(PCB_ID),
 m_client(new WiFiClient()),
 m_mqtt(nullptr)
-//m_relayCtrl(nullptr)
 {
     m_mqtt = new PubSubClient(getClient()); 
     m_relayCtrl = new RelayController();
 
-    // Configure secure client
-    // m_client->setCACert(m_NET_ROOT_CA);
+    // Configure the MQTT server and set the callback to the "callback" member function of MqttController
     m_mqtt->setServer(m_MQTT_SERVER, m_MQTT_PORT);
     m_mqtt->setCallback([this] (char* topic, byte* payload, unsigned int length) { this->callback(topic, payload, length); });
 
     this->connect();
 }
+
 MqttController::~MqttController () { /* No implementation */ }
 
+/*
+ *  Loop method that consecutively executes MQTT and WiFi logic such as (re)connecting to the Internet / MQTT Broker
+ *  and calling the internal loop method of the PubSubClient which handles the recieving of the actual messages. 
+ */
 void MqttController::loop()
 {
     m_currentMillis = millis();
@@ -45,13 +46,17 @@ void MqttController::loop()
     m_mqtt->loop();
 }
 
-
 //* ***********************************************
 //          PUBLIC METHODS
 //* ***********************************************
+/*
+ *  The callback method handles the recieving of MQTT messages. The message topic, payload and length are made available
+ *  to use and interpret in the firmware. The callback also controls the RelayController by translating the recieved MQTT
+ *  commands into function calls for the RelayController.
+ */ 
 void MqttController::callback (char* topic, byte* payload, unsigned int length) 
 {
-    // *** Read incoming data *********************
+    // Read and parse incoming MQTT messages
     String formattedPayload;
     for (int i = 0; i < length; i++) {
         formattedPayload += (char)payload[i];
@@ -59,18 +64,15 @@ void MqttController::callback (char* topic, byte* payload, unsigned int length)
     String t = topic;
     Serial.println((char*)"INCOMING\n === TOPIC === \n\t" + t + "\n === PAYLOAD === \n\t" + formattedPayload.c_str());
 
-    // *** Act upon transmission ******************
     // TODO: Implement event handlers.
 }
-
 
 //* ***********************************************
 //          PRIVATE METHODS
 //* ***********************************************
 bool MqttController::connect ()
 {
-    // *** WiFi Connecting ************************
-    // Check if WiFi connection is available
+    // Check if WiFi is connected, if not connect to the specified SSID with the specified PASSWORD
     if (WiFi.status() != WL_CONNECTED) {
         Serial.println("Attempting WiFi connection...");
         WiFi.begin(m_NET_SSID, m_NET_PASS);
@@ -84,10 +86,8 @@ bool MqttController::connect ()
         Serial.println("\nConnected WiFi\n");
     }
 
-
-    // *** MQTT Connecting ************************
-    // Check if connection is available
-    if (m_mqtt->connected())                        {  return true; }
+    // Check if MQTT is connected, if not connect to the earlier specified MQTT Broker.
+    if (m_mqtt->connected()) {  return true; }
     Serial.println("Attempting MQTT connection...");
     while(!m_mqtt->connected())
     {
@@ -97,8 +97,8 @@ bool MqttController::connect ()
             m_mqtt->subscribe("somerandomtopictosubscribe");
             return true;
         } else {
-            Serial.print("failed, rc=" + (String)m_mqtt->state() + " try again in 5 seconds");
             // Wait 5 seconds before retrying
+            Serial.print("failed, rc=" + (String)m_mqtt->state() + " try again in 5 seconds");
             delay(5000);
         }
     }
@@ -106,10 +106,12 @@ bool MqttController::connect ()
     return false;
 }
 
+/*
+ *  The publish method publishes a specified message on the specified topic
+ */ 
 bool MqttController::publish (const char* topic, const char* payload)
 {
     // Check if WiFi and MQTT are available
-    if (!m_mqtt->connected())                       { return false; }
-
+    if (!m_mqtt->connected()) { return false; }
     return m_mqtt->publish(topic, payload);
 }
