@@ -8,23 +8,32 @@
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include "Header/MqttController.h"
+#include "Header/DipswitchReader.h"
 #include "Header/RelayController.h"
 
 //* ***********************************************
 //          CONSTRUCTOR & DESTRUCTOR
 //* ***********************************************
-MqttController::MqttController (int PCB_ID) :
-m_PCB_ID(PCB_ID),
+MqttController::MqttController () :
 m_client(new WiFiClient()),
 m_mqtt(nullptr)
 {
+    // *** Create ClientID ************************
+    char PCB_ID[200];
+    int received = DipswitchReader::fetchPCBID();
+    sprintf(PCB_ID, "MCB-%d", received);
+    m_PCB_ID = PCB_ID;
+
+    Serial.print("PCB Identifier: ");
+    Serial.println(m_PCB_ID);
+
+    // *** Initialize MQTT Client *****************
     m_mqtt = new PubSubClient(getClient()); 
     m_relayCtrl = new RelayController();
 
     // Configure the MQTT server and set the callback to the "callback" member function of MqttController
     m_mqtt->setServer(m_MQTT_SERVER, m_MQTT_PORT);
     m_mqtt->setCallback([this] (char* topic, byte* payload, unsigned int length) { this->callback(topic, payload, length); });
-
     this->connect();
 }
 
@@ -92,7 +101,7 @@ bool MqttController::connect ()
     while(!m_mqtt->connected())
     {
         // TODO: Implement PCB_ID here.
-        if (m_mqtt->connect("collectieBrandsMuseum")) {
+        if (m_mqtt->connect(m_PCB_ID)) {
             Serial.println("Connected MQTT");
             m_mqtt->subscribe("somerandomtopictosubscribe");
             return true;

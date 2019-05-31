@@ -22,7 +22,7 @@ DipswitchReader::~DipswitchReader () { /* No implementation */ }
  */ 
 int DipswitchReader::fetchPCBID ()
 {
-    int m_dipswitches[4]            { 5, 4, 3, 2 };
+    int m_dipswitches[4]            { 27, 25, 32, 4};
     int m_binarySize[4]             { 1, 2, 4, 8 };
 
     // Initialize pins

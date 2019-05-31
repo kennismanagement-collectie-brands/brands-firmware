@@ -15,7 +15,7 @@ public:
 //* ***********************************************
 //          CONSTRUCTOR & DESTRUCTOR
 //* ***********************************************
-MqttController                                  (int PCB_ID);
+MqttController                                  ();
 ~MqttController                                 ();
 
 //* ***********************************************
@@ -39,8 +39,8 @@ WiFiClient& getClient()                         { return *m_client; }
 //          PRIVATE ATTRIBUTES
 //* ***********************************************
 // Connection variables
-const char*                             m_NET_SSID      = "SSID";
-const char*                             m_NET_PASS      = "PASSWORD";
+const char*                             m_NET_SSID      = "DiabetiFi";
+const char*                             m_NET_PASS      = "verySecurePassword";
 const char*                             m_NET_ROOT_CA;
 const char*                             m_MQTT_SERVER   = "broker.hivemq.com";
 const int                               m_MQTT_PORT     = 1883;
@@ -53,7 +53,7 @@ unsigned long                           m_currentMillis;
 const unsigned long                     m_delay = 5000;
 
 // Print identifier
-int                                     m_PCB_ID;
+const char*                             m_PCB_ID;
 
 // Objects
 WiFiClient*                             m_client;
