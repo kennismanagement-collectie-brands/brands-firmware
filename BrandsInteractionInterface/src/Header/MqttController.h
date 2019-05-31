@@ -15,7 +15,7 @@ public:
 //* ***********************************************
 //          CONSTRUCTOR & DESTRUCTOR
 //* ***********************************************
-MqttController                                  (String PCB_ID);
+MqttController                                  ();
 ~MqttController                                 ();
 
 //* ***********************************************
@@ -53,7 +53,7 @@ unsigned long                           m_currentMillis;
 const unsigned long                     m_delay = 5000;
 
 // Print identifier
-String                                  m_PCB_ID;
+const char*                             m_PCB_ID;
 
 // Objects
 WiFiClient*                             m_client;

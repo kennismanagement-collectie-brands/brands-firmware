@@ -6,7 +6,6 @@
 
 #include <Arduino.h>
 #include "Header/Core.h"
-#include "Header/DipswitchReader.h"
 #include "Header/MqttController.h"
 
 Core* core; 
@@ -32,11 +31,10 @@ void loop() {
 //* ***********************************************
 //          CONSTRUCTOR & DESTRUCTOR
 //* ***********************************************
-Core::Core () :
-m_PCB_ID("MCB-" + (String)DipswitchReader::fetchPCBID())
+Core::Core ()
 {
   Serial.println("Initialized Serial monitor!");
-  m_mqtt = new MqttController(m_PCB_ID);
+  m_mqtt = new MqttController();
 }
 
 Core::~Core() { /* Not implemented */ }
