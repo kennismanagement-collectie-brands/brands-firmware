@@ -44,6 +44,7 @@ void MqttController::loop()
     }
 
     m_mqtt->loop();
+    m_relayCtrl->loop();
 }
 
 //* ***********************************************
