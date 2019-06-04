@@ -74,12 +74,22 @@ void MqttController::callback (char* topic, byte* payload, unsigned int length)
     if(strcmp(commands[CommandSet::COMMAND], "on") == 0)
     {
         m_relayCtrl->setRelay(atoi(formattedPayload), HIGH);
-        Serial.println("Relay would be switched to ON");
+        Serial.printf("Relay %d was switched on!\n", atoi(formattedPayload));
     }
     else if(strcmp(commands[CommandSet::COMMAND], "off") == 0)
     {
         m_relayCtrl->setRelay(atoi(formattedPayload), LOW);
-        Serial.println("Relay would be switched to OFF");
+        Serial.printf("Relay %d was switched off!\n", atoi(formattedPayload));
+    }
+    else if(strcmp(commands[CommandSet::COMMAND], "allon") == 0)
+    {
+        for(byte i = 0; i < 4; i++) { m_relayCtrl->setRelay(i, HIGH); }
+        Serial.println("All relays were switched on!");
+    }
+    else if(strcmp(commands[CommandSet::COMMAND], "alloff") == 0)
+    {
+        for(byte i = 0; i < 4; i++) { m_relayCtrl->setRelay(i, LOW); }
+        Serial.println("All relays were switched on!");
     }
 }
 
