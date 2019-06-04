@@ -53,6 +53,7 @@ void MqttController::loop()
     }
 
     m_mqtt->loop();
+    m_relayCtrl->loop();
 }
 
 //* ***********************************************
@@ -66,14 +67,40 @@ void MqttController::loop()
 void MqttController::callback (char* topic, byte* payload, unsigned int length) 
 {
     // Read and parse incoming MQTT messages
-    String formattedPayload;
-    for (int i = 0; i < length; i++) {
-        formattedPayload += (char)payload[i];
-    }
-    String t = topic;
-    Serial.println((char*)"INCOMING\n === TOPIC === \n\t" + t + "\n === PAYLOAD === \n\t" + formattedPayload.c_str());
+    payload[length] = 0;
+    const char* formattedPayload = reinterpret_cast<const char*>(payload);
+    Serial.println((char*)"INCOMING\n === TOPIC === \n\t" + (String)topic + "\n === PAYLOAD === \n\t" + formattedPayload);
 
-    // TODO: Implement event handlers.
+    // Split the topic up into different parts to read the command set
+    std::vector<const char*> commands;
+    char* tokens = strtok(topic, "/");
+    while(tokens != NULL)
+    {
+        commands.push_back(tokens);
+        tokens = strtok(NULL, "/");
+    }
+
+    // Compare the command to the available command in the command set
+    if(strcmp(commands[CommandSet::COMMAND], "on") == 0)
+    {
+        m_relayCtrl->setRelay(atoi(formattedPayload), HIGH);
+        Serial.printf("Relay %d was switched on!\n", atoi(formattedPayload));
+    }
+    else if(strcmp(commands[CommandSet::COMMAND], "off") == 0)
+    {
+        m_relayCtrl->setRelay(atoi(formattedPayload), LOW);
+        Serial.printf("Relay %d was switched off!\n", atoi(formattedPayload));
+    }
+    else if(strcmp(commands[CommandSet::COMMAND], "allon") == 0)
+    {
+        for(byte i = 0; i < 4; i++) { m_relayCtrl->setRelay(i, HIGH); }
+        Serial.println("All relays were switched on!");
+    }
+    else if(strcmp(commands[CommandSet::COMMAND], "alloff") == 0)
+    {
+        for(byte i = 0; i < 4; i++) { m_relayCtrl->setRelay(i, LOW); }
+        Serial.println("All relays were switched on!");
+    }
 }
 
 //* ***********************************************
@@ -103,7 +130,7 @@ bool MqttController::connect ()
         // TODO: Implement PCB_ID here.
         if (m_mqtt->connect(m_PCB_ID)) {
             Serial.println("Connected MQTT");
-            m_mqtt->subscribe("somerandomtopictosubscribe");
+            m_mqtt->subscribe("relaymodule/1101/#");
             return true;
         } else {
             // Wait 5 seconds before retrying

@@ -17,6 +17,12 @@ RelayController::RelayController  ()
     {
         pinMode(relay, OUTPUT);
     }
+
+    // Set all timeouts for the relais
+    for(unsigned long previous : m_relaysTimeout)
+    {
+        previous = millis();
+    }
 }
 
 RelayController::~RelayController () { /* No implementation */ }
@@ -25,11 +31,32 @@ RelayController::~RelayController () { /* No implementation */ }
 //          PUBLIC METHODS
 //* ***********************************************
 /*
+ *  Loop method handles automatic timeouts for relais that are turned on but never
+ *  turned off again
+ */
+void RelayController::loop()
+{
+    for(byte i = 0; i < 4; i++)
+    {
+        unsigned long currentMillis = millis();
+        if(currentMillis - m_relaysTimeout[i] > m_timeoutInterval)
+        {
+            m_relaysTimeout[i] = currentMillis;
+            this->setRelay(i, LOW);
+        }
+    }
+}
+
+/*
  *  Set a specific relay to either a ON (HIGH) or OFF (LOW) state.
  */ 
 void RelayController::setRelay (int relay, bool state)
 {
     // Prevent retrieving garbage values or causing segmentation faults
-    if(relay >= 4) return;
+    if(relay < 0 || relay >= 4) return;
     digitalWrite(m_relays[relay], state);
+    if(state == HIGH)
+    {
+        m_relaysTimeout[relay] = millis();
+    }
 }
