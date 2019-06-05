@@ -4,6 +4,7 @@
 // *** Dependencies *******************************
 #include <esp_https_ota.h>
 
+#define domain "emit-it.com/"
 #define ca_cert "-----BEGIN CERTIFICATE-----\n" \
 "MIIEkjCCA3qgAwIBAgIQCgFBQgAAAVOFc2oLheynCDANBgkqhkiG9w0BAQsFADA/\n" \
 "MSQwIgYDVQQKExtEaWdpdGFsIFNpZ25hdHVyZSBUcnVzdCBDby4xFzAVBgNVBAMT\n" \
@@ -42,7 +43,7 @@ public:
 //* ***********************************************
 //          PUBLIC METHODS
 //* ***********************************************
-static void updateOTA               (const char* URL);
+static void updateOTA               (char* URL);
 
 private:
 //* ***********************************************

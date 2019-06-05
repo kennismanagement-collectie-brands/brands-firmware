@@ -17,10 +17,16 @@ OTAController::~OTAController () {/*No implementation */ }
 //          PUBLIC METHODS
 //* ***********************************************
 
-void OTAController::updateOTA(const char* URL)
+void OTAController::updateOTA(char* path)
 {
+    // Construct URL with domain and path
+    char buffer[strlen(path) + strlen(domain) + 12];
+    sprintf(buffer, "https://%s%s.bin", domain, path);
+    const char* URL = buffer;
+    Serial.print("Fetching Firmware from: ");
+    Serial.println(URL);
+
     Serial.println("OTA Updater invoked!");
-    Serial.println(ca_cert);
 
     //TODO: Implement URL not empty check
     if (1 == 0) {
