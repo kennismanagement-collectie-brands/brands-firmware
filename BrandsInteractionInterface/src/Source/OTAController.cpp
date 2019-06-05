@@ -19,20 +19,18 @@ OTAController::~OTAController () {/*No implementation */ }
 
 void OTAController::updateOTA(char* path)
 {
+    Serial.println("OTA Updater invoked!");
+
+    if (strlen(path) == 0) {
+        Serial.println("Invalid path format... aborted OTA Update.");
+        return; 
+    }
     // Construct URL with domain and path
     char buffer[strlen(path) + strlen(domain) + 12];
     sprintf(buffer, "https://%s%s.bin", domain, path);
     const char* URL = buffer;
     Serial.print("Fetching Firmware from: ");
     Serial.println(URL);
-
-    Serial.println("OTA Updater invoked!");
-
-    //TODO: Implement URL not empty check
-    if (1 == 0) {
-        Serial.println("Invalid URL format... aborted OTA Update.");
-        return; 
-    }
 
     // Prepare config struct
     esp_http_client_config_t m_config = 
