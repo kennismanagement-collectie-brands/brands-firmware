@@ -43,7 +43,7 @@ public:
 //* ***********************************************
 //          PUBLIC METHODS
 //* ***********************************************
-static void updateOTA               (char* URL);
+static void updateOTA               (const char* URL);
 
 private:
 //* ***********************************************

@@ -17,7 +17,7 @@ OTAController::~OTAController () {/*No implementation */ }
 //          PUBLIC METHODS
 //* ***********************************************
 
-void OTAController::updateOTA(char* path)
+void OTAController::updateOTA(const char* path)
 {
     Serial.println("OTA Updater invoked!");
 

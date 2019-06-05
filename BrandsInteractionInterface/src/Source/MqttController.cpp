@@ -1,7 +1,7 @@
 // ========================================================================
 // File:    MqttController.cpp
 // Date:    21-05-2019
-// By:      Mark Meerlo
+// By:      Mark Meerlo & Arjan Kuiper
 // ========================================================================
 
 #include <PubSubClient.h>
@@ -10,6 +10,7 @@
 #include "Header/MqttController.h"
 #include "Header/DipswitchReader.h"
 #include "Header/RelayController.h"
+#include "Header/OTAController.h"
 
 //* ***********************************************
 //          CONSTRUCTOR & DESTRUCTOR
@@ -71,6 +72,7 @@ void MqttController::callback (char* topic, byte* payload, unsigned int length)
     const char* formattedPayload = reinterpret_cast<const char*>(payload);
     Serial.println((char*)"INCOMING\n === TOPIC === \n\t" + (String)topic + "\n === PAYLOAD === \n\t" + formattedPayload);
 
+    
     // Split the topic up into different parts to read the command set
     std::vector<const char*> commands;
     char* tokens = strtok(topic, "/");
@@ -80,6 +82,15 @@ void MqttController::callback (char* topic, byte* payload, unsigned int length)
         tokens = strtok(NULL, "/");
     }
 
+    // *** OTA Check 
+    // Check if the given topic was meant as to update with OTA
+    if (strcmp(commands[CommandSet::IDENTIFIER], "ota_update") == 0) 
+    {
+        OTAController::updateOTA(formattedPayload);
+        return;
+    }
+
+    // *** Command check
     // Compare the command to the available command in the command set
     if(strcmp(commands[CommandSet::COMMAND], "on") == 0)
     {
@@ -99,7 +110,7 @@ void MqttController::callback (char* topic, byte* payload, unsigned int length)
     else if(strcmp(commands[CommandSet::COMMAND], "alloff") == 0)
     {
         for(byte i = 0; i < 4; i++) { m_relayCtrl->setRelay(i, LOW); }
-        Serial.println("All relays were switched on!");
+        Serial.println("All relays were switched off!");
     }
 }
 
@@ -127,10 +138,10 @@ bool MqttController::connect ()
     Serial.println("Attempting MQTT connection...");
     while(!m_mqtt->connected())
     {
-        // TODO: Implement PCB_ID here.
         if (m_mqtt->connect(m_PCB_ID)) {
             Serial.println("Connected MQTT");
             m_mqtt->subscribe("relaymodule/1101/#");
+            m_mqtt->subscribe("relaymodule/ota_update");
             return true;
         } else {
             // Wait 5 seconds before retrying
