@@ -20,9 +20,9 @@ m_client(new WiFiClient()),
 m_mqtt(nullptr)
 {
     // *** Create ClientID ************************
-    char PCB_ID[200];
+    char PCB_ID[10];
     int received = DipswitchReader::fetchPCBID();
-    sprintf(PCB_ID, "MCB-%d", received);
+    snprintf(PCB_ID, sizeof(PCB_ID), "MCB-%d", received);
     m_PCB_ID = PCB_ID;
 
     Serial.print("PCB Identifier: ");
@@ -149,7 +149,7 @@ bool MqttController::connect ()
             Serial.println("Connected MQTT");
 
             // Format the topic to subscribe to using the PCB ID
-            char topicBuffer[100];
+            char topicBuffer[30];
             snprintf(topicBuffer, sizeof(topicBuffer), "relaymodule/%s/#", m_PCB_ID);
 
             m_mqtt->subscribe(topicBuffer);
