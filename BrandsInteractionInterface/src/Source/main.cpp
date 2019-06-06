@@ -48,5 +48,7 @@ void Core::setup () { /* Not implemented */ }
 void Core::loop ()
 {
   // Loop the MQTT logic which handles internet connection and recieving of messages
+  //Serial.printf("Heap Usage: %d/%d (%d%%)\n", (ESP.getHeapSize() - ESP.getFreeHeap()), ESP.getHeapSize()
+  //  , (int)round(100.0 - (((float)ESP.getFreeHeap() / (float)ESP.getHeapSize()) * 100.0)));
   m_mqtt->loop();
 }
