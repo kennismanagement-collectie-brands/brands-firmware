@@ -8,6 +8,7 @@ class RelayController;
 
 // *** Dependencies *******************************
 #include <Arduino.h>
+#include <WiFi.h>
 
 // *** Command Set Enumeration*********************
 enum CommandSet
@@ -42,6 +43,7 @@ bool connect                                    ();
 bool publish                                    (const char* topic, 
                                                  const char* payload);
 WiFiClient& getClient()                         { return *m_client; }
+void wifiEvent                                  (WiFiEvent_t event);
 
 //* ***********************************************
 //          PRIVATE ATTRIBUTES

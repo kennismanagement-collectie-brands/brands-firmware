@@ -20,9 +20,9 @@ m_client(new WiFiClient()),
 m_mqtt(nullptr)
 {
     // *** Create ClientID ************************
-    char PCB_ID[200];
+    char PCB_ID[10];
     int received = DipswitchReader::fetchPCBID();
-    sprintf(PCB_ID, "MCB-%d", received);
+    snprintf(PCB_ID, sizeof(PCB_ID), "MCB-%d", received);
     m_PCB_ID = PCB_ID;
 
     Serial.print("PCB Identifier: ");
@@ -121,6 +121,9 @@ bool MqttController::connect ()
 {
     // Check if WiFi is connected, if not connect to the specified SSID with the specified PASSWORD
     if (WiFi.status() != WL_CONNECTED) {
+        // Turn the LED_BUILTIN off to show that connection was lost
+        digitalWrite(LED_BUILTIN, LOW);
+
         Serial.println("Attempting WiFi connection...");
         WiFi.begin(m_NET_SSID, m_NET_PASS);
 
@@ -130,6 +133,7 @@ bool MqttController::connect ()
             Serial.print(".");
         }
 
+        WiFi.onEvent(std::bind(&MqttController::wifiEvent, this, std::placeholders::_1));
         Serial.println("\nConnected WiFi\n");
     }
 
@@ -138,19 +142,44 @@ bool MqttController::connect ()
     Serial.println("Attempting MQTT connection...");
     while(!m_mqtt->connected())
     {
+        // Turn the LED_BUILTIN off to show that connection was lost
+        digitalWrite(LED_BUILTIN, LOW);
+
         if (m_mqtt->connect(m_PCB_ID)) {
             Serial.println("Connected MQTT");
-            m_mqtt->subscribe("relaymodule/1101/#");
+
+            // Format the topic to subscribe to using the PCB ID
+            char topicBuffer[30];
+            snprintf(topicBuffer, sizeof(topicBuffer), "relaymodule/%s/#", m_PCB_ID);
+
+            m_mqtt->subscribe(topicBuffer);
             m_mqtt->subscribe("relaymodule/ota_update");
+
+            // Turn the LED_BUILTIN on to show that we are connected to the internet
+            digitalWrite(LED_BUILTIN, HIGH);
+
             return true;
         } else {
-            // Wait 5 seconds before retrying
-            Serial.print("failed, rc=" + (String)m_mqtt->state() + " try again in 5 seconds");
-            delay(5000);
+            Serial.print("MQTT failed, rc=" + (String)m_mqtt->state() + " - Restarting system in 2 seconds\n");
+            delay(2000);
+            ESP.restart();
         }
     }
 
     return false;
+}
+
+void MqttController::wifiEvent(WiFiEvent_t event)
+{
+    switch (event) {
+        case SYSTEM_EVENT_STA_DISCONNECTED:
+            Serial.println("Disconnected from WiFi access point");
+            m_mqtt->disconnect();
+            break;
+        default:
+            // We don't intend on handling other enumeration values
+            break;
+    }
 }
 
 /*
@@ -162,3 +191,4 @@ bool MqttController::publish (const char* topic, const char* payload)
     if (!m_mqtt->connected()) { return false; }
     return m_mqtt->publish(topic, payload);
 }
+
