@@ -114,16 +114,6 @@ void MqttController::callback (char* topic, byte* payload, unsigned int length)
     }
 }
 
-void MqttController::wifiEvent(WiFiEvent_t event)
-{
-    switch (event) {
-        case SYSTEM_EVENT_STA_DISCONNECTED:
-            Serial.println("Disconnected from WiFi access point");
-            m_mqtt->disconnect();
-            break;
-    }
-}
-
 //* ***********************************************
 //          PRIVATE METHODS
 //* ***********************************************
@@ -157,7 +147,12 @@ bool MqttController::connect ()
 
         if (m_mqtt->connect(m_PCB_ID)) {
             Serial.println("Connected MQTT");
-            m_mqtt->subscribe("relaymodule/1101/#");
+
+            // Format the topic to subscribe to using the PCB ID
+            char topicBuffer[100];
+            snprintf(topicBuffer, sizeof(topicBuffer), "relaymodule/%s/#", m_PCB_ID);
+
+            m_mqtt->subscribe(topicBuffer);
             m_mqtt->subscribe("relaymodule/ota_update");
 
             // Turn the LED_BUILTIN on to show that we are connected to the internet
@@ -172,6 +167,19 @@ bool MqttController::connect ()
     }
 
     return false;
+}
+
+void MqttController::wifiEvent(WiFiEvent_t event)
+{
+    switch (event) {
+        case SYSTEM_EVENT_STA_DISCONNECTED:
+            Serial.println("Disconnected from WiFi access point");
+            m_mqtt->disconnect();
+            break;
+        default:
+            // We don't intend on handling other enumeration values
+            break;
+    }
 }
 
 /*
