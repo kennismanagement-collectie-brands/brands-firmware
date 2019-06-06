@@ -114,6 +114,16 @@ void MqttController::callback (char* topic, byte* payload, unsigned int length)
     }
 }
 
+void MqttController::wifiEvent(WiFiEvent_t event)
+{
+    switch (event) {
+        case SYSTEM_EVENT_STA_DISCONNECTED:
+            Serial.println("Disconnected from WiFi access point");
+            m_mqtt->disconnect();
+            break;
+    }
+}
+
 //* ***********************************************
 //          PRIVATE METHODS
 //* ***********************************************
@@ -133,6 +143,7 @@ bool MqttController::connect ()
             Serial.print(".");
         }
 
+        WiFi.onEvent(std::bind(&MqttController::wifiEvent, this, std::placeholders::_1));
         Serial.println("\nConnected WiFi\n");
     }
 
@@ -172,3 +183,4 @@ bool MqttController::publish (const char* topic, const char* payload)
     if (!m_mqtt->connected()) { return false; }
     return m_mqtt->publish(topic, payload);
 }
+
