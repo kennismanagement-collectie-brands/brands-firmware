@@ -16,6 +16,7 @@ Core* core;
 void setup() {
   Serial.begin(BAUD_RATE);
   Serial.println("Executing setup...");
+  pinMode(LED_BUILTIN, OUTPUT);
 
   delay(100);
   core = new Core();

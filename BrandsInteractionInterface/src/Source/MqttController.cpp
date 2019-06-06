@@ -121,6 +121,9 @@ bool MqttController::connect ()
 {
     // Check if WiFi is connected, if not connect to the specified SSID with the specified PASSWORD
     if (WiFi.status() != WL_CONNECTED) {
+        // Turn the LED_BUILTIN off to show that connection was lost
+        digitalWrite(LED_BUILTIN, LOW);
+
         Serial.println("Attempting WiFi connection...");
         WiFi.begin(m_NET_SSID, m_NET_PASS);
 
@@ -138,15 +141,22 @@ bool MqttController::connect ()
     Serial.println("Attempting MQTT connection...");
     while(!m_mqtt->connected())
     {
+        // Turn the LED_BUILTIN off to show that connection was lost
+        digitalWrite(LED_BUILTIN, LOW);
+
         if (m_mqtt->connect(m_PCB_ID)) {
             Serial.println("Connected MQTT");
             m_mqtt->subscribe("relaymodule/1101/#");
             m_mqtt->subscribe("relaymodule/ota_update");
+
+            // Turn the LED_BUILTIN on to show that we are connected to the internet
+            digitalWrite(LED_BUILTIN, HIGH);
+
             return true;
         } else {
-            // Wait 5 seconds before retrying
-            Serial.print("failed, rc=" + (String)m_mqtt->state() + " try again in 5 seconds");
-            delay(5000);
+            Serial.print("MQTT failed, rc=" + (String)m_mqtt->state() + " - Restarting system in 2 seconds\n");
+            delay(2000);
+            ESP.restart();
         }
     }
 
