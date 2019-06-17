@@ -6,7 +6,7 @@
 
 #include <PubSubClient.h>
 #include <WiFi.h>
-#include <WiFiClient.h>
+#include <WiFiClientSecure.h>
 #include "Header/MqttController.h"
 #include "Header/DipswitchReader.h"
 #include "Header/RelayController.h"
@@ -16,7 +16,7 @@
 //          CONSTRUCTOR & DESTRUCTOR
 //* ***********************************************
 MqttController::MqttController () :
-m_client(new WiFiClient()),
+m_client(new WiFiClientSecure()),
 m_mqtt(nullptr)
 {
     // *** Create ClientID ************************
@@ -29,6 +29,10 @@ m_mqtt(nullptr)
     Serial.println(m_PCB_ID);
 
     // *** Initialize MQTT Client *****************
+    Serial.println("Setting CA Cert: ");
+    Serial.println(m_CA_CERT);
+    m_client->setCACert(m_CA_CERT);
+
     m_mqtt = new PubSubClient(getClient()); 
     m_relayCtrl = new RelayController();
 
