@@ -39,7 +39,7 @@ void RelayController::loop()
     for(byte i = 0; i < 4; i++)
     {
         unsigned long currentMillis = millis();
-        if(currentMillis - m_relaysTimeout[i] > m_timeoutInterval)
+        if(currentMillis - m_relaysTimeout[i] > m_timeoutInterval && digitalRead(m_relays[i]) == HIGH)
         {
             m_relaysTimeout[i] = currentMillis;
             this->setRelay(i, LOW);
@@ -55,8 +55,13 @@ void RelayController::setRelay (int relay, bool state)
     // Prevent retrieving garbage values or causing segmentation faults
     if(relay < 0 || relay >= 4) return;
     digitalWrite(m_relays[relay], state);
-    if(state == HIGH)
+    if(state == HIGH) m_relaysTimeout[relay] = millis();
+
+    for(int i = 0; i < 4; i++)
     {
-        m_relaysTimeout[relay] = millis();
+        if(i != relay && digitalRead(m_relays[i]) == HIGH)
+        {
+            digitalWrite(m_relays[i], LOW);
+        }
     }
 }
