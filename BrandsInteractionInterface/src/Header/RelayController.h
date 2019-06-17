@@ -23,7 +23,7 @@ private:
 //* ***********************************************
 int                                         m_relays[4] = {27, 25, 32, 4};
 unsigned long                               m_relaysTimeout[4];
-long                                        m_timeoutInterval = 1000 * 10;
+long                                        m_timeoutInterval = 1000 * 60 * 5; // 5 minutes
 
 };
 #endif
