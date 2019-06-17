@@ -6,7 +6,7 @@
 
 #include <PubSubClient.h>
 #include <WiFi.h>
-#include <WiFiClient.h>
+#include <WiFiClientSecure.h>
 #include "Header/MqttController.h"
 #include "Header/DipswitchReader.h"
 #include "Header/RelayController.h"
@@ -16,7 +16,7 @@
 //          CONSTRUCTOR & DESTRUCTOR
 //* ***********************************************
 MqttController::MqttController () :
-m_client(new WiFiClient()),
+m_client(new WiFiClientSecure()),
 m_mqtt(nullptr)
 {
     // *** Create ClientID ************************
@@ -29,11 +29,15 @@ m_mqtt(nullptr)
     Serial.println(m_PCB_ID);
 
     // *** Initialize MQTT Client *****************
+    m_client->setCACert(m_CA_CERT);
+
     m_mqtt = new PubSubClient(getClient()); 
     m_relayCtrl = new RelayController();
 
     // Configure the MQTT server and set the callback to the "callback" member function of MqttController
     m_mqtt->setServer(m_MQTT_SERVER, m_MQTT_PORT);
+    Serial.print("Setting CA cert:");
+    Serial.println(m_CA_CERT);
     m_mqtt->setCallback([this] (char* topic, byte* payload, unsigned int length) { this->callback(topic, payload, length); });
     this->connect();
 }
