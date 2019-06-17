@@ -2,7 +2,7 @@
 #define MQTTCONRTOLLER_H
 
 // *** Forward Declarations ***********************
-class WiFiClientSecure;
+class WiFiClient;
 class PubSubClient;
 class RelayController;
 
@@ -42,7 +42,7 @@ private:
 bool connect                                    ();
 bool publish                                    (const char* topic, 
                                                  const char* payload);
-WiFiClientSecure& getClient()                    { return *m_client; }
+WiFiClient& getClient()                         { return *m_client; }
 void wifiEvent                                  (WiFiEvent_t event);
 
 //* ***********************************************
@@ -89,7 +89,7 @@ const unsigned long                     m_delay = 5000;
 const char*                             m_PCB_ID;
 
 // Objects
-WiFiClientSecure*                       m_client;
+WiFiClient*                             m_client;
 PubSubClient*                           m_mqtt;
 RelayController*                        m_relayCtrl;
 
