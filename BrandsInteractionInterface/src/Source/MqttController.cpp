@@ -149,7 +149,7 @@ bool MqttController::connect ()
         // Turn the LED_BUILTIN off to show that connection was lost
         digitalWrite(LED_BUILTIN, LOW);
 
-        if (m_mqtt->connect(m_PCB_ID)) {
+        if (m_mqtt->connect(m_PCB_ID, m_MQTT_USER, m_MQTT_PASS)) {
             Serial.println("Connected MQTT");
 
             // Format the topic to subscribe to using the PCB ID

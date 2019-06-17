@@ -54,8 +54,8 @@ const char*                             m_NET_PASS      = "PASSWORD";
 const char*                             m_NET_ROOT_CA;
 const char*                             m_MQTT_SERVER   = "95.217.9.30";
 const int                               m_MQTT_PORT     = 8883;
-const char*                             m_MQTT_USER;
-const char*                             m_MQTT_PASS;
+const char*                             m_MQTT_USER     = "MCBC";           // Museum Collectie Brands Controller
+const char*                             m_MQTT_PASS     = "h48dPdnK6aGM";
 const char*                             m_CA_CERT       = "-----BEGIN CERTIFICATE-----\n" \
 "MIIDvzCCAqegAwIBAgIUBRpUNsJT3YVa1atqNVGuYPGW2tkwDQYJKoZIhvcNAQEL\n" \
 "BQAwbzELMAkGA1UEBhMCTkwxEzARBgNVBAgMClNvbWUtU3RhdGUxEDAOBgNVBAoM\n" \
