@@ -1,0 +1,6 @@
+#ifndef MQTTCONTROLLER_H
+#define MQTTCONRTOLLER_H
+
+#define FIRMWARE_VERSION "1.0"
+
+#endif

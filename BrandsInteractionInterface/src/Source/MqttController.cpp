@@ -7,10 +7,11 @@
 #include <PubSubClient.h>
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
-#include "Header/MqttController.h"
 #include "Header/DipswitchReader.h"
-#include "Header/RelayController.h"
+#include "Header/MqttController.h"
 #include "Header/OTAController.h"
+#include "Header/RelayController.h"
+#include "Header/SuperGlobals.h"
 
 //* ***********************************************
 //          CONSTRUCTOR & DESTRUCTOR
@@ -116,6 +117,12 @@ void MqttController::callback (char* topic, byte* payload, unsigned int length)
         for(byte i = 0; i < 4; i++) { m_relayCtrl->setRelay(i, LOW); }
         Serial.println("All relays were switched off!");
     }
+    else if(strcmp(commands[CommandSet::COMMAND], "version") == 0)
+    {
+        char topicBuffer[30];
+        snprintf(topicBuffer, sizeof(topicBuffer), "relaymodule/MCB-%d/myversion", DipswitchReader::fetchPCBID());
+        m_mqtt->publish(topicBuffer, FIRMWARE_VERSION);
+    }
 }
 
 //* ***********************************************
@@ -181,7 +188,7 @@ bool MqttController::connect ()
 
             // Format the topic to subscribe to using the PCB ID
             char topicBuffer[30];
-            snprintf(topicBuffer, sizeof(topicBuffer), "relaymodule/%s/#", m_PCB_ID);
+            snprintf(topicBuffer, sizeof(topicBuffer), "relaymodule/MCB-%d/#", DipswitchReader::fetchPCBID());
 
             m_mqtt->subscribe(topicBuffer);
             m_mqtt->subscribe("relaymodule/ota_update");
@@ -193,7 +200,6 @@ bool MqttController::connect ()
         } else {
             Serial.print("MQTT failed, rc=" + (String)m_mqtt->state() + " - Restarting system in 2 seconds\n");
             delay(2000);
-            ESP.restart();
         }
     }
 
