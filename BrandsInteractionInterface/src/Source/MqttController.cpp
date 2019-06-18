@@ -7,10 +7,11 @@
 #include <PubSubClient.h>
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
-#include "Header/MqttController.h"
 #include "Header/DipswitchReader.h"
-#include "Header/RelayController.h"
+#include "Header/MqttController.h"
 #include "Header/OTAController.h"
+#include "Header/RelayController.h"
+#include "Header/SuperGlobals.h"
 
 //* ***********************************************
 //          CONSTRUCTOR & DESTRUCTOR
@@ -116,6 +117,12 @@ void MqttController::callback (char* topic, byte* payload, unsigned int length)
         for(byte i = 0; i < 4; i++) { m_relayCtrl->setRelay(i, LOW); }
         Serial.println("All relays were switched off!");
     }
+    else if(strcmp(commands[CommandSet::COMMAND], "version") == 0)
+    {
+        char topicBuffer[30];
+        snprintf(topicBuffer, sizeof(topicBuffer), "relaymodule/MCB-%d/myversion", DipswitchReader::fetchPCBID());
+        m_mqtt->publish(topicBuffer, FIRMWARE_VERSION);
+    }
 }
 
 //* ***********************************************
@@ -129,20 +136,47 @@ bool MqttController::connect ()
         digitalWrite(LED_BUILTIN, LOW);
 
         Serial.println("Attempting WiFi connection...");
-        WiFi.begin(m_NET_SSID, m_NET_PASS);
+        Serial.println("Scanning networks in the area...");
 
-        // Wait for connection to be established
-        while (WiFi.status() != WL_CONNECTED) {
-            delay(1000);
-            Serial.print(".");
+        // Scan for available networks in the area
+        int visibleNetworks = WiFi.scanNetworks();
+        Serial.printf("Found a total of %d accespoints, trying to connect...\n", visibleNetworks);
+        if(visibleNetworks > 0)
+        {
+            for(int i = 0; i < m_NET_SSID.size(); i++)
+            {
+                for(int j = 0; j < visibleNetworks; j++)
+                {
+                    // Check to see if any of the scanned network's SSID is known to us
+                    // If it is, we try to connect using the known SSID and password
+                    if(strcmp(m_NET_SSID.at(i), WiFi.SSID(j).c_str()) == 0)
+                    {
+                        Serial.printf("Trying to connect to: %s\n", m_NET_SSID.at(i));
+                        WiFi.begin(m_NET_SSID.at(i), m_NET_PASS.at(i));
+
+                        // Wait for connection to be established
+                        while (WiFi.status() != WL_CONNECTED) {
+                            delay(1000);
+                            Serial.print(".");
+                        }
+
+                        WiFi.onEvent(std::bind(&MqttController::wifiEvent, this, std::placeholders::_1));
+                        Serial.println("\nConnected WiFi\n"); 
+                        return true;
+                    }
+                }
+            }
         }
-
-        WiFi.onEvent(std::bind(&MqttController::wifiEvent, this, std::placeholders::_1));
-        Serial.println("\nConnected WiFi\n");
+        else
+        {
+            Serial.println("Could not find any WiFi accespoints!");
+            return false;
+        }
     }
 
     // Check if MQTT is connected, if not connect to the earlier specified MQTT Broker.
-    if (m_mqtt->connected()) {  return true; }
+    if (WiFi.status() != WL_CONNECTED) return false;
+    if (m_mqtt->connected())  return true;
     Serial.println("Attempting MQTT connection...");
     while(!m_mqtt->connected())
     {
@@ -154,7 +188,7 @@ bool MqttController::connect ()
 
             // Format the topic to subscribe to using the PCB ID
             char topicBuffer[30];
-            snprintf(topicBuffer, sizeof(topicBuffer), "relaymodule/%s/#", m_PCB_ID);
+            snprintf(topicBuffer, sizeof(topicBuffer), "relaymodule/MCB-%d/#", DipswitchReader::fetchPCBID());
 
             m_mqtt->subscribe(topicBuffer);
             m_mqtt->subscribe("relaymodule/ota_update");
@@ -166,7 +200,6 @@ bool MqttController::connect ()
         } else {
             Serial.print("MQTT failed, rc=" + (String)m_mqtt->state() + " - Restarting system in 2 seconds\n");
             delay(2000);
-            ESP.restart();
         }
     }
 
