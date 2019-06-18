@@ -129,16 +129,39 @@ bool MqttController::connect ()
         digitalWrite(LED_BUILTIN, LOW);
 
         Serial.println("Attempting WiFi connection...");
-        WiFi.begin(m_NET_SSID, m_NET_PASS);
 
-        // Wait for connection to be established
-        while (WiFi.status() != WL_CONNECTED) {
-            delay(1000);
-            Serial.print(".");
+        int visibleNetworks = WiFi.scanNetworks();
+        Serial.printf("Found a total of %d accespoints, trying to connect...\n", visibleNetworks);
+        if(visibleNetworks > 0)
+        {
+            for(int i = 0; i < visibleNetworks; i++)
+            {
+                for(int j = 0; i < m_NET_SSID.size(); j++)
+                {
+                    Serial.printf("Comparing %s with %s\n", m_NET_SSID.at(j), WiFi.SSID(i).c_str());
+                    if(strcmp(m_NET_SSID.at(j), WiFi.SSID(i).c_str()) == 0)
+                    {
+                        Serial.printf("Trying: %s with %s\n", m_NET_SSID.at(j), m_NET_PASS.at(j));
+                        WiFi.begin(m_NET_SSID.at(j), m_NET_PASS.at(j));
+
+                        // Wait for connection to be established
+                        while (WiFi.status() != WL_CONNECTED) {
+                            delay(1000);
+                            Serial.print(".");
+                        }
+
+                        WiFi.onEvent(std::bind(&MqttController::wifiEvent, this, std::placeholders::_1));
+                        Serial.println("\nConnected WiFi\n"); 
+                        return true;
+                    }
+                }
+            }
         }
-
-        WiFi.onEvent(std::bind(&MqttController::wifiEvent, this, std::placeholders::_1));
-        Serial.println("\nConnected WiFi\n");
+        else
+        {
+            Serial.println("Could not find any WiFi accespoints!");
+            return false;
+        }
     }
 
     // Check if MQTT is connected, if not connect to the earlier specified MQTT Broker.

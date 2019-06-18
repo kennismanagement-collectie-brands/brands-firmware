@@ -49,8 +49,8 @@ void wifiEvent                                  (WiFiEvent_t event);
 //          PRIVATE ATTRIBUTES
 //* ***********************************************
 // Connection variables
-const char*                             m_NET_SSID      = "SSID";
-const char*                             m_NET_PASS      = "PASSWORD";
+std::vector<const char*>                m_NET_SSID      = {"SSID1", "SSID2"};
+std::vector<const char*>                m_NET_PASS      = {"PASSWORD1", "PASSWORD2"};
 const char*                             m_NET_ROOT_CA;
 const char*                             m_MQTT_SERVER   = "95.217.9.30";
 const int                               m_MQTT_PORT     = 8883;
