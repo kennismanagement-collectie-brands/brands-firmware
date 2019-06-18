@@ -131,6 +131,7 @@ bool MqttController::connect ()
         Serial.println("Attempting WiFi connection...");
         Serial.println("Scanning networks in the area...");
 
+        // Scan for available networks in the area
         int visibleNetworks = WiFi.scanNetworks();
         Serial.printf("Found a total of %d accespoints, trying to connect...\n", visibleNetworks);
         if(visibleNetworks > 0)
@@ -139,10 +140,11 @@ bool MqttController::connect ()
             {
                 for(int j = 0; j < visibleNetworks; j++)
                 {
-                    Serial.printf("Comparing %s with %s\n", m_NET_SSID.at(i), WiFi.SSID(j).c_str());
+                    // Check to see if any of the scanned network's SSID is known to us
+                    // If it is, we try to connect using the known SSID and password
                     if(strcmp(m_NET_SSID.at(i), WiFi.SSID(j).c_str()) == 0)
                     {
-                        Serial.printf("Trying: %s with %s\n", m_NET_SSID.at(i), m_NET_PASS.at(i));
+                        Serial.printf("Trying to connect to: %s\n", m_NET_SSID.at(i));
                         WiFi.begin(m_NET_SSID.at(i), m_NET_PASS.at(i));
 
                         // Wait for connection to be established
