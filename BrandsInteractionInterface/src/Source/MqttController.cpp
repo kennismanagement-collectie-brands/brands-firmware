@@ -129,20 +129,21 @@ bool MqttController::connect ()
         digitalWrite(LED_BUILTIN, LOW);
 
         Serial.println("Attempting WiFi connection...");
+        Serial.println("Scanning networks in the area...");
 
         int visibleNetworks = WiFi.scanNetworks();
         Serial.printf("Found a total of %d accespoints, trying to connect...\n", visibleNetworks);
         if(visibleNetworks > 0)
         {
-            for(int i = 0; i < visibleNetworks; i++)
+            for(int i = 0; i < m_NET_SSID.size(); i++)
             {
-                for(int j = 0; i < m_NET_SSID.size(); j++)
+                for(int j = 0; j < visibleNetworks; j++)
                 {
-                    Serial.printf("Comparing %s with %s\n", m_NET_SSID.at(j), WiFi.SSID(i).c_str());
-                    if(strcmp(m_NET_SSID.at(j), WiFi.SSID(i).c_str()) == 0)
+                    Serial.printf("Comparing %s with %s\n", m_NET_SSID.at(i), WiFi.SSID(j).c_str());
+                    if(strcmp(m_NET_SSID.at(i), WiFi.SSID(j).c_str()) == 0)
                     {
-                        Serial.printf("Trying: %s with %s\n", m_NET_SSID.at(j), m_NET_PASS.at(j));
-                        WiFi.begin(m_NET_SSID.at(j), m_NET_PASS.at(j));
+                        Serial.printf("Trying: %s with %s\n", m_NET_SSID.at(i), m_NET_PASS.at(i));
+                        WiFi.begin(m_NET_SSID.at(i), m_NET_PASS.at(i));
 
                         // Wait for connection to be established
                         while (WiFi.status() != WL_CONNECTED) {
@@ -165,7 +166,8 @@ bool MqttController::connect ()
     }
 
     // Check if MQTT is connected, if not connect to the earlier specified MQTT Broker.
-    if (m_mqtt->connected()) {  return true; }
+    if (WiFi.status() != WL_CONNECTED) return false;
+    if (m_mqtt->connected())  return true;
     Serial.println("Attempting MQTT connection...");
     while(!m_mqtt->connected())
     {
