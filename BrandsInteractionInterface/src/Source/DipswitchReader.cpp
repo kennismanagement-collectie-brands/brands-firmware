@@ -35,7 +35,6 @@ int DipswitchReader::fetchPCBID ()
 
     for (int i = 0; i < 4; i++) {
         if (digitalRead(m_dipswitches[i]) == LOW) { result += m_binarySize[i]; }
-        Serial.printf("Binarysize (thus id) = %d\n", result);
     }
 
     // De-Inputize pins

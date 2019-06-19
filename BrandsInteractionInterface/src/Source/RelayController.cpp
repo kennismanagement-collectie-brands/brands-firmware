@@ -54,7 +54,6 @@ void RelayController::setRelay (int relay, bool state)
 {
     // Prevent retrieving garbage values or causing segmentation faults
     if(relay < 0 || relay >= 4) return;
-    pinMode(m_relays[relay], OUTPUT);
     digitalWrite(m_relays[relay], state);
     if(state == HIGH) m_relaysTimeout[relay] = millis();
 
