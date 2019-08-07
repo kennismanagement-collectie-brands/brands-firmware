@@ -22,6 +22,8 @@ DipswitchReader::~DipswitchReader () { /* No implementation */ }
  */ 
 int DipswitchReader::fetchPCBID ()
 {
+    return 0;
+
     int m_dipswitches[4]            { 22, 21, 17, 16};
     int m_binarySize[4]             { 1, 2, 4, 8 };
 
